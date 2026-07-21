@@ -2313,21 +2313,8 @@ body.splash-active{overflow:hidden;}
           <div class="err-msg">חובה למלא מייל תקין</div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>תאריך מועדף לאיסוף</label>
-          <select id="ofDate">
-            <option value="">בחר תאריך...</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>חלון שעות</label>
-          <select id="ofTime">
-            <option value="">בחר שעה...</option>
-            <option value="צהריים (12:00-16:00)">צהריים (12:00-16:00)</option>
-            <option value="ערב (17:00-21:00)">ערב (17:00-21:00)</option>
-          </select>
-        </div>
+      <div class="field">
+        <p style="color:var(--muted);font-size:14px;">איסוף עצמי בתיאום</p>
       </div>
       <div class="field">
         <label>הערות מיוחדות</label>
@@ -3066,9 +3053,6 @@ const orderSubmit = document.getElementById('orderSubmit');
 const orderSummary = document.getElementById('orderSummary');
 
 function openOrderModal(){
-  // Generate next Wednesdays + Sundays (6 options)
-  populateDeliveryDates();
-
   // Pre-fill saved customer details
   try {
     const saved = JSON.parse(localStorage.getItem('halbonintz_customer') || '{}');
@@ -3217,35 +3201,6 @@ function getPaymentLabel(method){
   return {bit:'Bit', transfer:'העברה בנקאית', cash:'מזומן באיסוף'}[method] || method;
 }
 
-/* Populate delivery dates — next Wednesdays + Sundays */
-function populateDeliveryDates(){
-  const select = document.getElementById('ofDate');
-  select.innerHTML = '<option value="">בחר תאריך...</option>';
-  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
-  const months = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  // Find next Wed (3) and Sun (0) — collect 8 options total
-  const options = [];
-  for(let i = 1; i <= 28; i++){
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const dow = d.getDay();
-    if(dow === 0 || dow === 3){
-      const label = `יום ${days[dow]}, ${d.getDate()} ב${months[d.getMonth()]}`;
-      const value = d.toISOString().slice(0,10);
-      options.push({label, value});
-      if(options.length >= 6) break;
-    }
-  }
-  options.forEach(o=>{
-    const opt = document.createElement('option');
-    opt.value = o.value;
-    opt.textContent = o.label;
-    select.appendChild(opt);
-  });
-}
-
 function validateField(id, validator){
   const el = document.getElementById(id);
   const field = el.closest('.field');
@@ -3281,9 +3236,6 @@ orderSubmit.addEventListener('click', ()=>{
     ofPhone: document.getElementById('ofPhone').value.trim(),
     ofEmail: document.getElementById('ofEmail').value.trim(),
   };
-  const ofDate = document.getElementById('ofDate');
-  const ofDateLabel = ofDate.selectedIndex > 0 ? ofDate.options[ofDate.selectedIndex].textContent : '';
-  const ofTime = document.getElementById('ofTime').value;
   const ofNotes = document.getElementById('ofNotes').value.trim();
   const paymentLabel = getPaymentLabel(payMethod);
 
@@ -3298,8 +3250,6 @@ orderSubmit.addEventListener('click', ()=>{
   waMsg += `שם: ${customer.ofName}\n`;
   waMsg += `טלפון: ${customer.ofPhone}\n`;
   waMsg += `מייל: ${customer.ofEmail}\n`;
-  if(ofDateLabel) waMsg += `📅 תאריך מועדף לאיסוף: ${ofDateLabel}\n`;
-  if(ofTime) waMsg += `⏰ חלון שעות: ${ofTime}\n`;
   if(ofNotes) waMsg += `📝 הערות: ${ofNotes}\n`;
   waMsg += `\n*💳 אמצעי תשלום:* ${paymentLabel}\n`;
   if(payMethod === 'transfer'){
@@ -3345,8 +3295,6 @@ orderSubmit.addEventListener('click', ()=>{
     'סה"כ לתשלום': `${total} ₪`,
   };
   if(savings > 0) emailData['חיסכון מההנחה'] = `${savings} ₪`;
-  if(ofDateLabel) emailData['תאריך מועדף לאיסוף'] = ofDateLabel;
-  if(ofTime) emailData['חלון שעות'] = ofTime;
   if(ofNotes) emailData['הערות הלקוח'] = ofNotes;
   if(payMethod === 'transfer') emailData['פרטי העברה שניתנו'] = 'בנק הפועלים | סניף 658 | חשבון 136342 | ע"ש לירן יוסף בן ארצי';
 
