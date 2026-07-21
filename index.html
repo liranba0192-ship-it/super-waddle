@@ -2313,16 +2313,6 @@ body.splash-active{overflow:hidden;}
           <div class="err-msg">חובה למלא מייל תקין</div>
         </div>
       </div>
-      <div class="field">
-        <label>עיר / אזור <span class="req">*</span></label>
-        <input type="text" id="ofCity" placeholder="תל אביב" autocomplete="address-level2">
-        <div class="err-msg">חובה למלא עיר / אזור</div>
-      </div>
-      <div class="field">
-        <label>מיקום מועדף לאיסוף / פרטים לתיאום <span class="req">*</span></label>
-        <input type="text" id="ofAddress" placeholder="לדוגמה: נוח לי לתאם ליד הרצל 1, או במקום אחר" autocomplete="off">
-        <div class="err-msg">חובה למלא פרטים לתיאום</div>
-      </div>
       <div class="field-row">
         <div class="field">
           <label>תאריך מועדף לאיסוף</label>
@@ -3082,7 +3072,7 @@ function openOrderModal(){
   // Pre-fill saved customer details
   try {
     const saved = JSON.parse(localStorage.getItem('halbonintz_customer') || '{}');
-    ['ofName','ofPhone','ofEmail','ofCity','ofAddress'].forEach(id=>{
+    ['ofName','ofPhone','ofEmail'].forEach(id=>{
       if(saved[id]) document.getElementById(id).value = saved[id];
     });
   } catch(e){}
@@ -3268,8 +3258,6 @@ orderSubmit.addEventListener('click', ()=>{
   const v1 = validateField('ofName', v => v.length >= 2);
   const v2 = validateField('ofPhone', v => /^[\d\-\+\s]{9,}$/.test(v));
   const v3 = validateField('ofEmail', v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
-  const v4 = validateField('ofCity', v => v.length >= 2);
-  const v5 = validateField('ofAddress', v => v.length >= 3);
   const payMethod = getSelectedPayment();
   if(!payMethod){
     document.getElementById('payErr').style.display = 'block';
@@ -3283,7 +3271,7 @@ orderSubmit.addEventListener('click', ()=>{
     showToast('⚠️ חובה לאשר את ביצוע התשלום לפני שליחת ההזמנה', true);
     return;
   }
-  if(!(v1 && v2 && v3 && v4 && v5 && payMethod)){
+  if(!(v1 && v2 && v3 && payMethod)){
     showToast('נא למלא את כל השדות ולבחור אמצעי תשלום', true);
     return;
   }
@@ -3292,8 +3280,6 @@ orderSubmit.addEventListener('click', ()=>{
     ofName: document.getElementById('ofName').value.trim(),
     ofPhone: document.getElementById('ofPhone').value.trim(),
     ofEmail: document.getElementById('ofEmail').value.trim(),
-    ofCity: document.getElementById('ofCity').value.trim(),
-    ofAddress: document.getElementById('ofAddress').value.trim(),
   };
   const ofDate = document.getElementById('ofDate');
   const ofDateLabel = ofDate.selectedIndex > 0 ? ofDate.options[ofDate.selectedIndex].textContent : '';
@@ -3312,7 +3298,6 @@ orderSubmit.addEventListener('click', ()=>{
   waMsg += `שם: ${customer.ofName}\n`;
   waMsg += `טלפון: ${customer.ofPhone}\n`;
   waMsg += `מייל: ${customer.ofEmail}\n`;
-  waMsg += `פרטי תיאום: ${customer.ofAddress}, ${customer.ofCity}\n`;
   if(ofDateLabel) waMsg += `📅 תאריך מועדף לאיסוף: ${ofDateLabel}\n`;
   if(ofTime) waMsg += `⏰ חלון שעות: ${ofTime}\n`;
   if(ofNotes) waMsg += `📝 הערות: ${ofNotes}\n`;
@@ -3353,7 +3338,6 @@ orderSubmit.addEventListener('click', ()=>{
     'שם הלקוח': customer.ofName,
     'מספר טלפון': customer.ofPhone,
     'כתובת מייל': customer.ofEmail,
-    'פרטי תיאום': `${customer.ofAddress}, ${customer.ofCity}`,
     'אמצעי תשלום': paymentLabel,
     'מוצרים שהוזמנו': productsList,
     'מספר פריטים שונים': ids.length,
@@ -3410,7 +3394,6 @@ function showSuccessScreen(customer, total, savings, paymentLabel, payMethod){
 
   // Summary
   let html = `<div class="row"><span>לקוח</span><span>${customer.ofName}</span></div>`;
-  html += `<div class="row"><span>פרטי תיאום</span><span>${customer.ofAddress}, ${customer.ofCity}</span></div>`;
   if(paymentLabel) html += `<div class="row" style="color:#ff8c1f;"><span>💳 אמצעי תשלום</span><span style="font-weight:800;">${paymentLabel}</span></div>`;
   if(savings > 0) html += `<div class="row" style="color:#22c55e;"><span>💰 חיסכון</span><span>${savings} ₪</span></div>`;
   html += `<div class="row total"><span>סה"כ לתשלום</span><span class="v">${total} ₪</span></div>`;
