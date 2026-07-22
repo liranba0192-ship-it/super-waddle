@@ -724,10 +724,20 @@ a{color:inherit;text-decoration:none;}
 }
 .bot-panel.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;}
 .bot-header{
+  position:relative;
   display:flex;align-items:center;gap:12px;padding:18px 20px;
   background:linear-gradient(135deg,var(--orange) 0%,#ff8c1f 100%);
   color:#000;
 }
+.bot-close{
+  position:absolute;top:18px;left:18px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,.15);border:none;
+  display:grid;place-items:center;color:#000;
+  transition:.25s var(--easing);cursor:pointer;
+}
+.bot-close:hover{background:rgba(0,0,0,.3);transform:rotate(90deg);}
+.bot-close svg{width:16px;height:16px;}
 .bot-header-avatar{
   width:44px;height:44px;border-radius:50%;
   background:rgba(0,0,0,.15);display:grid;place-items:center;
@@ -2270,6 +2280,7 @@ body.splash-active{overflow:hidden;}
 
 <div class="bot-panel" id="botPanel">
   <div class="bot-header">
+    <button class="bot-close" id="botClose" aria-label="סגור"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     <div class="bot-header-avatar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M12 8V4M9 4h6"/><circle cx="8.5" cy="14" r="1.2" fill="currentColor"/><circle cx="15.5" cy="14" r="1.2" fill="currentColor"/><path d="M9 17.5h6"/></svg>
     </div>
@@ -2314,7 +2325,7 @@ body.splash-active{overflow:hidden;}
         </div>
       </div>
       <div class="field">
-        <p style="color:var(--muted);font-size:14px;">איסוף עצמי בתיאום</p>
+        <p style="color:var(--muted);font-size:14px;">איסוף עצמי מתואם מראש</p>
       </div>
       <div class="field">
         <label>הערות מיוחדות</label>
@@ -3813,6 +3824,12 @@ renderCart();
     const isOpen = panel.classList.toggle('show');
     fab.classList.toggle('open', isOpen);
     if(isOpen) initChat();
+  });
+
+  const botClose = document.getElementById('botClose');
+  botClose.addEventListener('click', ()=>{
+    panel.classList.remove('show');
+    fab.classList.remove('open');
   });
 })();
 
