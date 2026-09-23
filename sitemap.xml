@@ -3,4 +3,5 @@
   <url><loc>https://halbonintz.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://halbonintz.com/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://halbonintz.com/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://halbonintz.com/accessibility.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
